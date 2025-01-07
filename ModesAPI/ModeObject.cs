@@ -17,7 +17,7 @@ namespace ModdedModesAPI.ModesAPI
 		}
 		private ModeObject(Transform parent) : this() // Expects an object to be the parent (such as the ModeSelectionScreen, it's a parent of many buttons inside it)
 		{
-			this.parent = parent;
+			ScreenTransform = parent;
 			manager = CustomModesManager.AttachToSelectionScreen(parent, true);
 		}
 
@@ -36,7 +36,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <param name="parent">The selection screen transform's (Ex.: The <see cref="MainModeButtonController"/> object's transform).</param>
 		public static ModeObject CreateModeObjectOverExistingScreen(Transform parent)
 		{
-			int idx = CustomModesHandler.existingModeObjects.FindIndex(x => x.parent == parent);
+			int idx = CustomModesHandler.existingModeObjects.FindIndex(x => x.ScreenTransform == parent);
 			if (idx != -1)
 				return CustomModesHandler.existingModeObjects[idx];
 
@@ -54,7 +54,9 @@ namespace ModdedModesAPI.ModesAPI
 				SelectionScreen.ChallengesScreen => new(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")
 			};
-
+		/// <summary>
+		/// This class holds a lot of useful methods to create your button inside the <see cref="ModeObject"/>.
+		/// </summary>
 		public ButtonBuilder StandardButtonBuilder { get; }
 
 		// ************************ Internal Getters *************************
@@ -72,12 +74,10 @@ namespace ModdedModesAPI.ModesAPI
 
 		TooltipController toolTipControlRef;
 
-		/// <summary>
-		/// This class holds a lot of useful methods to create your button inside the <see cref="ModeObject"/>.
-		/// </summary>
+		
 		
 
-		readonly Transform parent;
+		public Transform ScreenTransform { get; }
 
 		readonly CustomModesManager manager;
 	}
