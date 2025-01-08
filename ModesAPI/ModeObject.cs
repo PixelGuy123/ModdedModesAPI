@@ -171,11 +171,13 @@ namespace ModdedModesAPI.ModesAPI
 		/// <exception cref="System.InvalidOperationException"></exception>
 		public void SetThePageButtonsAxis(Vector2 offset)
 		{
-			if (!manager.supportsPages)
-				throw new System.InvalidOperationException("This ModeObject instance was set to not support pages. The page toggler position cannot be changed then.");
+			if (!manager.supportsPages || allowAxisChanges)
+				throw new System.InvalidOperationException("This ModeObject instance does not support pages or it isn\'t allowed to the change the page\'s buttons\' position.");
 			offset.x = Mathf.Min(offset.x - togglerOffset, togglerTouchLimit);
 			manager.UpdateTogglersOffset(offset);
 		}
+
+		internal bool allowAxisChanges = true;
 
 		/// <summary>
 		/// This class holds a lot of useful methods to create your buttons inside the <see cref="ModeObject"/>.

@@ -57,9 +57,13 @@ namespace ModdedModesAPI.Patches
 			mod.allowedToChangeDescriptionText = false;
 			mod.allowSeedInputCreation = false;
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
+			mod.allowAxisChanges = false;
 
 			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
+
 			mod.SetThePageButtonsAxis(new(195f, 75f));
+			mod.allowAxisChanges = false;
+
 			mod.allowedToChangeDescriptionText = false;
 			mod.IsLinked = true;
 			mod.allowSeedInputCreation = false; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.

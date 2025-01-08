@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using ModdedModesAPI.ModesAPI;
 
 namespace ModdedModesAPI.BepInEx
 {
@@ -14,6 +15,14 @@ namespace ModdedModesAPI.BepInEx
             logger = Logger;
 			var h = new Harmony(mod_guid);
 			h.PatchAll();
+
+
+			//CustomModesHandler.OnMainMenuInitialize += () =>
+			//{
+			//	var modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
+				
+			//};
+ 
         }
     }
 }
