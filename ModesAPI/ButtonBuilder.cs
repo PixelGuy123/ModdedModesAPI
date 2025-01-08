@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using ModdedModesAPI.BepInEx;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <summary>
 		/// Create a blank button with no additional functionality. Only use this method if you want to create something "out of the box".
 		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
 		/// <param name="name">The name of the button's <see cref="GameObject"/></param>
 		/// <returns>A button instance.</returns>
@@ -45,6 +47,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <summary>
 		/// Creates a button that changes screens.
 		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
 		/// <param name="screenToGo">The screen that the button will redirect the player to.</param>
 		/// <param name="transitionTime">The time the transition takes (by default, standard value from the game).</param>
@@ -74,12 +77,42 @@ namespace ModdedModesAPI.ModesAPI
 			but.transitionTime = transitionTime;
 			return but;
 		}
-
-		public StandardMenuButton CreateModeButton<G, LV>(G manager = null, LV builder = null) where G : BaseGameManager where LV : LevelBuilder
+		/// <summary>
+		/// Creates a button that actually redirects you to a level (like the Hide-and-seek button).
+		/// </summary>
+		/// <param name="sceneToStart">The <see cref="SceneObject"/> that the game will load.</param>
+		/// <param name="createsASave">If the button triggers the game to create a save for that level.</param>
+		/// <param name="lives">How many lives do you start in the elevator (2 by default, don't be mistaken by 3, the life counter starts by 0).</param>
+		/// <param name="mode">The mode set for that level (Main by default).</param>
+		/// <param name="elevatorScreen">The <see cref="ElevatorScreen"/> used (leaving null will use the an existent prefab of the elevator).</param>
+		/// <returns></returns>
+		public StandardMenuButton CreateModeButton(SceneObject sceneToStart, bool createsASave = false, int lives = 2, Mode mode = Mode.Main, ElevatorScreen elevatorScreen = null)
 		{
 			var but = CreateBlankButton("GenericModeButton");
 
-			//.. make it start a game, like hide and seek does
+
+			but.OnPress.AddListener(() =>
+			{ // this follows almost the same calls that the game does when starting Hide-and-seek
+				modeObject.ScreenTransform.gameObject.SetActive(false);
+
+				if (modeObject.SeedInput) // Make sure the GameLoader uses the right seed input in screen
+				{
+					ResourceStorage.loaderInstance.seedInput = modeObject.SeedInput;
+					ResourceStorage.loaderInstance.CheckSeed();
+				}
+				else
+					ResourceStorage.loaderInstance.useSeed = false;
+
+				ResourceStorage.loaderInstance.Initialize(System.Math.Max(0, lives));
+
+				var screenUsed = elevatorScreen ?? ResourceStorage.elvScreen;
+				ResourceStorage.loaderInstance.AssignElevatorScreen(screenUsed);
+				ResourceStorage.loaderInstance.LoadLevel(sceneToStart);
+				screenUsed.gameObject.SetActive(true);
+				ResourceStorage.loaderInstance.SetMode((int)mode);
+				ResourceStorage.loaderInstance.SetSave(createsASave);
+			});
+
 
 			return but;
 		}
@@ -93,7 +126,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <exception cref="System.InvalidOperationException"></exception>
 		public StandardMenuButton CreateSeedInput(out SeedInput input)
 		{
-			if (modeObject.HasSeedInput)
+			if (!modeObject.allowSeedInputCreation || modeObject.SeedInput)
 				throw new System.InvalidOperationException("This ModeObject already contains a seed input or it\'s not allowed to have one.");
 
 			var but = CreateBlankButton("SeedInput", false)
@@ -107,7 +140,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			but.OnPress.AddListener(input.ChangeMode);
 
-			modeObject.HasSeedInput = true;
+			modeObject.SeedInput = input;
 
 			return but;
 		}
@@ -121,6 +154,8 @@ namespace ModdedModesAPI.ModesAPI
 		public void AddTooltipAnimation(StandardMenuButton but, string toolTipKey)
 		{
 			var tipController = modeObject.ToolTipControl;
+			tipController.enabled = true;
+
 			but.eventOnHigh = true;
 			but.OnHighlight.AddListener(() => tipController.UpdateTooltip(toolTipKey));
 			but.OffHighlight.AddListener(tipController.CloseTooltip);

@@ -9,5 +9,9 @@ namespace ModdedModesAPI.BepInEx
 		internal static CursorController cursorPre;
 
 		internal static RectTransform bottomPre, tooltipBase;
+
+		internal static GameLoader loaderInstance;
+
+		internal static ElevatorScreen elvScreen;
 	}
 }

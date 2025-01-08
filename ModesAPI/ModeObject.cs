@@ -164,17 +164,36 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		public ButtonBuilder StandardButtonBuilder { get; }
 
+		/// <summary>
+		/// The description text that appears below buttons (they are only usable in custom screens to avoid unexpected changes in main screens).
+		/// </summary>
 		public TextMeshProUGUI DescriptionText { get
 			{
 				if (!allowedToChangeDescriptionText)
 					throw new System.NotSupportedException("Cannot return an instance of the DescriptionText from this screen, it was set to be innacessible by default.");
 
-				if (!DescriptionText)
+				if (!descriptionTextRef)
 				{
-					// .. creation process of description text
+					descriptionTextRef = new GameObject("ModeText").AddComponent<TextMeshProUGUI>();
+					descriptionTextRef.gameObject.layer = LayerMask.NameToLayer("UI");
 
+					descriptionTextRef.transform.SetParent(ScreenTransform);
+					descriptionTextRef.transform.localPosition = Vector2.down * 20f;
+					descriptionTextRef.transform.localScale = Vector3.one * 1f;
+					descriptionTextRef.transform.SetSiblingIndex(ScreenTransform.Find("TooltipBase").GetSiblingIndex());
+
+					var rect = descriptionTextRef.transform as RectTransform;
+					rect.sizeDelta = new(480f, 96f);
+					rect.pivot = new(0.5f, 1f);
+
+					descriptionTextRef.color = Color.black;
+					descriptionTextRef.alignment = TextAlignmentOptions.Top;
+
+
+					var loc = descriptionTextRef.gameObject.AddComponent<TextLocalizer>();
+					loc.key = "Men_PickMode";
 				}
-				return DescriptionText;
+				return descriptionTextRef;
 			} 
 		}
 
@@ -210,6 +229,8 @@ namespace ModdedModesAPI.ModesAPI
 		void CreateToolTipBase()
 		{
 			ToolTipControl = ScreenTransform.gameObject.AddComponent<TooltipController>();
+			ToolTipControl.enabled = false;
+
 			var toolTipBase = Object.Instantiate(ResourceStorage.tooltipBase);
 			toolTipBase.name = "TooltipBase";
 			toolTipBase.SetParent(ScreenTransform);
@@ -234,7 +255,8 @@ namespace ModdedModesAPI.ModesAPI
 		// ************************ Internal Getters *************************
 
 		internal bool IsLinked { get; set; } = false;
-		internal bool HasSeedInput { get; set; } = false;
+		internal SeedInput SeedInput { get; set; }
+		internal bool allowSeedInputCreation = true;
 
 		readonly internal CustomModesManager manager;
 

@@ -10,8 +10,9 @@ namespace ModdedModesAPI.Patches
 	[HarmonyPatch(typeof(MainMenu), "Start")]
 	internal static class MainMenuPatch
 	{
-		static void Postfix()
+		static void Postfix(MainMenu __instance)
 		{
+			// Setup for resources
 			if (ResourceStorage.togglersSheet == null)
 			{
 				ResourceStorage.togglersSheet = new Sprite[4];
@@ -41,17 +42,25 @@ namespace ModdedModesAPI.Patches
 			if (!ResourceStorage.tooltipBase)
 				ResourceStorage.tooltipBase = Resources.FindObjectsOfTypeAll<RectTransform>().First(x => x.GetInstanceID() > 0 && x.name == "TooltipBase");
 
+			if (!ResourceStorage.loaderInstance)
+				ResourceStorage.loaderInstance = Resources.FindObjectsOfTypeAll<GameLoader>().First(x => x.GetInstanceID() > 0);
+
+			if (!ResourceStorage.elvScreen)
+				ResourceStorage.elvScreen = Resources.FindObjectsOfTypeAll<ElevatorScreen>().First(x => x.GetInstanceID() > 0 && x.gameObject.scene == __instance.gameObject.scene);
+
+			// Actual call of the mode creation process
+
 			var mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
 			mod.IsLinked = true;
 			mod.allowedToChangeDescriptionText = false;
-			mod.HasSeedInput = true;
+			mod.allowSeedInputCreation = false;
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 
 			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
 			mod.SetThePageButtonsAxis(new(195f, 75f));
 			mod.allowedToChangeDescriptionText = false;
 			mod.IsLinked = true;
-			mod.HasSeedInput = true; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.
+			mod.allowSeedInputCreation = false; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 
 			CustomModesHandler.InvokeMainMenuInit();
