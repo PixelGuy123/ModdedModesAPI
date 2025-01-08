@@ -181,6 +181,16 @@ namespace ModdedModesAPI.ModesAPI
 		internal TextMeshProUGUI descriptionTextRef;
 		internal bool allowedToChangeDescriptionText = true;
 
+		/// <summary>
+		/// The <see cref="TooltipController"/> taht this ModeObject holds.
+		/// </summary>
+		public TooltipController ToolTipControl { get; private set; }
+
+		/// <summary>
+		/// The screen this instance is overriding.
+		/// </summary>
+		public RectTransform ScreenTransform { get; }
+
 		// ************************ Internal/Private Methods *************************
 
 		internal void CreateLink(ModeObject screenToReturn)
@@ -223,14 +233,8 @@ namespace ModdedModesAPI.ModesAPI
 
 		// ************************ Internal Getters *************************
 
-		internal TooltipController ToolTipControl { get; private set; }
-
 		internal bool IsLinked { get; set; } = false;
 		internal bool HasSeedInput { get; set; } = false;
-		/// <summary>
-		/// The screen this instance is overriding.
-		/// </summary>
-		public RectTransform ScreenTransform { get; }
 
 		readonly internal CustomModesManager manager;
 
