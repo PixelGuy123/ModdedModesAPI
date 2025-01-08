@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using ModdedModesAPI.BepInEx;
 using ModdedModesAPI.ModesAPI;
-using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace ModdedModesAPI.Patches
 {
@@ -9,10 +11,22 @@ namespace ModdedModesAPI.Patches
 	{
 		static void Postfix(MainMenu __instance)
 		{
+			if (ResourceStorage.togglersSheet == null)
+			{
+				ResourceStorage.togglersSheet = new Sprite[4];
+				for (int i = 0; i < 4; i++)
+				{
+					string name = "MenuArrowSheet_" + i;
+					ResourceStorage.togglersSheet[i] = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.GetInstanceID() > 0 && x.name == name);
+				}
+			}
+
 			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
 			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
 
 			CustomModesHandler.InvokeMainMenuInit(__instance);
+
+			CustomModesHandler.existingModeObjects.Clear(); // Clears out since no ModeObject should be instantiated after the invoke
 		}
 	}
 }

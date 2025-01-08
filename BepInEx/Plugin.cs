@@ -15,6 +15,11 @@ namespace ModdedModesAPI.BepInEx
             logger = Logger;
 			var h = new Harmony(mod_guid);
 			h.PatchAll();
+
+			CustomModesHandler.OnMainMenuInitialize += (men) =>
+			{
+				var modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen); // For now, does nothing. Just creating to see if it works
+			};
         }
     }
 }

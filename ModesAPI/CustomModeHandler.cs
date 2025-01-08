@@ -13,11 +13,9 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		public static event Action<MainMenu> OnMainMenuInitialize;
 
-		internal static void InvokeMainMenuInit(MainMenu menu)
-		{
-			existingModeObjects.Clear();
+		internal static void InvokeMainMenuInit(MainMenu menu) =>
 			OnMainMenuInitialize?.Invoke(menu);
-		}
+		
 
 		internal static List<ModeObject> existingModeObjects = [];
 	}
