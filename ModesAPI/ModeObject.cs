@@ -96,11 +96,11 @@ namespace ModdedModesAPI.ModesAPI
 		/// By default, all page buttons are built in (230,0). But you can change the both axis through this method. 
 		/// </summary>
 		/// <param name="offset">The offset it goes to (note that the X axis starts from (-230,0), the right page button will mirror the X axis from the left one).</param>
-		/// <exception cref="System.NotSupportedException"></exception>
+		/// <exception cref="System.InvalidOperationException"></exception>
 		public void SetThePageButtonsAxis(Vector2 offset)
 		{
 			if (!manager.supportsPages)
-				throw new System.NotSupportedException("This ModeObject instance was set to not support pages. The page toggler position cannot be changed then.");
+				throw new System.InvalidOperationException("This ModeObject instance was set to not support pages. The page toggler position cannot be changed then.");
 			offset.x = Mathf.Min(offset.x - togglerOffset, togglerTouchLimit);
 			manager.UpdateTogglersOffset(offset);
 		}

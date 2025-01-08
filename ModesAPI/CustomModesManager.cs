@@ -62,6 +62,7 @@ namespace ModdedModesAPI.ModesAPI
 					{
 						pages[i].buttons[x] = button;
 						button.transform.localPosition = available_Positions_For_Each_Screen[x]; // Each page *must* have the same positions set, that's a general rule
+						button.gameObject.SetActive(i == pageIdx);
 						return;
 					}
 				}
@@ -75,6 +76,7 @@ namespace ModdedModesAPI.ModesAPI
 			button.transform.localPosition = available_Positions_For_Each_Screen[0];
 
 			pages.Add(newPage);
+			button.gameObject.SetActive((pages.Count - 1) == pageIdx);
 		}
 
 		int pageIdx = 0;
