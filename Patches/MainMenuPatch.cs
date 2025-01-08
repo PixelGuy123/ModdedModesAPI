@@ -50,6 +50,8 @@ namespace ModdedModesAPI.Patches
 
 			// Actual call of the mode creation process
 
+			CustomModesHandler.allowModeObjectCreation = true;
+
 			var mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
 			mod.IsLinked = true;
 			mod.allowedToChangeDescriptionText = false;
@@ -66,6 +68,7 @@ namespace ModdedModesAPI.Patches
 			CustomModesHandler.InvokeMainMenuInit();
 
 			CustomModesHandler.existingModeObjects.Clear(); // Clears out since no ModeObject should be instantiated after the invoke
+			CustomModesHandler.allowModeObjectCreation = false;
 		}
 	}
 }

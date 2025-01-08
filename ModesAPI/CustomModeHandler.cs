@@ -18,5 +18,7 @@ namespace ModdedModesAPI.ModesAPI
 		
 
 		internal static List<ModeObject> existingModeObjects = [];
+
+		internal static bool allowModeObjectCreation = false;
 	}
 }

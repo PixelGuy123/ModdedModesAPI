@@ -11,7 +11,9 @@ namespace ModdedModesAPI.ModesAPI
 	/// </summary>
 	public class ModeObject
 	{
-		private ModeObject() => StandardButtonBuilder = new(this);
+		private ModeObject() =>
+			StandardButtonBuilder = new(this);
+		
 
 		private ModeObject(string screenName, bool hasPageSystem, params Vector2[] positions) : this() // Creates a new screen by default
 		{
@@ -113,8 +115,12 @@ namespace ModdedModesAPI.ModesAPI
 		/// <param name="hasPageSystem">If True, this blank screen will follow a similar behavior of pages that the existing ones have.</param>
 		/// <param name="availableButtonPositions">The positions that the buttons created by the <see cref="ModeObject"/> will be fixated to.</param>
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
-		public static ModeObject CreateBlankScreenInstance(string screenName, bool hasPageSystem, params Vector2[] availableButtonPositions) =>
-			new(screenName, hasPageSystem, availableButtonPositions);
+		/// <exception cref="System.InvalidOperationException"></exception>
+		public static ModeObject CreateBlankScreenInstance(string screenName, bool hasPageSystem, params Vector2[] availableButtonPositions)
+		{
+			ThrowIfNotAllowedToInstantiate();
+			return new(screenName, hasPageSystem, availableButtonPositions);
+		}
 
 
 		/// <summary>
@@ -123,8 +129,11 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		/// <param name="parent">The selection screen transform's (Ex.: The <see cref="MainModeButtonController"/> object's transform).</param>
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
 		public static ModeObject CreateModeObjectOverExistingScreen(Transform parent)
 		{
+			ThrowIfNotAllowedToInstantiate();
+
 			int idx = CustomModesHandler.existingModeObjects.FindIndex(x => x.ScreenTransform == parent);
 			if (idx != -1)
 				return CustomModesHandler.existingModeObjects[idx];
@@ -137,6 +146,8 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		/// <param name="screen">The selection screen enum needed.</param>
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
+		/// <exception cref="System.ArgumentException"></exception>
+		/// <exception cref="System.InvalidOperationException"></exception>
 		public static ModeObject CreateModeObjectOverExistingScreen(SelectionScreen screen) =>
 			screen switch
 			{
@@ -144,6 +155,12 @@ namespace ModdedModesAPI.ModesAPI
 				SelectionScreen.ChallengesScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")
 			};
+
+		static void ThrowIfNotAllowedToInstantiate()
+		{
+			if (!CustomModesHandler.allowModeObjectCreation)
+				throw new System.InvalidOperationException("Cannot create a ModeObject outside the MainMenu initialization. Please, add a listener to the CustomModesHandler.OnMainMenuInitialize event.");
+		}
 
 		// ********************* Public Methods ***********************
 
