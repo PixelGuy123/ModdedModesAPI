@@ -226,6 +226,7 @@ namespace ModdedModesAPI.ModesAPI
 		internal TooltipController ToolTipControl { get; private set; }
 
 		internal bool IsLinked { get; set; } = false;
+		internal bool HasSeedInput { get; set; } = false;
 		/// <summary>
 		/// The screen this instance is overriding.
 		/// </summary>

@@ -83,6 +83,34 @@ namespace ModdedModesAPI.ModesAPI
 
 			return but;
 		}
+		/// <summary>
+		/// Creates a <see cref="SeedInput"/> button in the screen.
+		/// <para>Note that trying to create a <see cref="SeedInput"/> inside a <see cref="ModeObject"/> that has one already will throw an exception.</para>
+		/// <para>You cannot make a <see cref="SeedInput"/> in the challenge screen. If your challenge requires it, make a button that goes to a different screen and add a seed input there, in order to accomplish that.</para>
+		/// </summary>
+		/// <param name="input">Output of the <see cref="SeedInput"/> instance.</param>
+		/// <returns>The button instance that holds the <see cref="SeedInput"/>.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		public StandardMenuButton CreateSeedInput(out SeedInput input)
+		{
+			if (modeObject.HasSeedInput)
+				throw new System.InvalidOperationException("This ModeObject already contains a seed input or it\'s not allowed to have one.");
+
+			var but = CreateBlankButton("SeedInput", false)
+				.AddTextVisual("Seed: Random", out var text);
+			but.transform.localPosition = Vector2.up * 148f;
+
+			input = but.gameObject.AddComponent<SeedInput>();
+			input.tmp = text;
+
+			text.alignment = TextAlignmentOptions.Top;
+
+			but.OnPress.AddListener(input.ChangeMode);
+
+			modeObject.HasSeedInput = true;
+
+			return but;
+		}
 
 
 		/// <summary>

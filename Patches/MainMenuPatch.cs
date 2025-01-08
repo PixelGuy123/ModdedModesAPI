@@ -44,12 +44,14 @@ namespace ModdedModesAPI.Patches
 			var mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
 			mod.IsLinked = true;
 			mod.allowedToChangeDescriptionText = false;
+			mod.HasSeedInput = true;
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 
 			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
 			mod.SetThePageButtonsAxis(new(195f, 75f));
 			mod.allowedToChangeDescriptionText = false;
 			mod.IsLinked = true;
+			mod.HasSeedInput = true; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 
 			CustomModesHandler.InvokeMainMenuInit();

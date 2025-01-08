@@ -19,12 +19,14 @@ namespace ModdedModesAPI.BepInEx
 
 			CustomModesHandler.OnMainMenuInitialize += () =>
 			{
-				var newScreen = ModeObject.CreateBlankScreenInstance("TestScreen", false, new(-100f, -50f), new(100f, 50f));
+				var newScreen = ModeObject.CreateBlankScreenInstance("TestScreen", false, new(-100f, 50f), new(100f, 50f));
 
 				newScreen.StandardButtonBuilder.CreateBlankButton("TestButton")
 				.AddTextVisual("I\'m a test button!", out _);
 				newScreen.StandardButtonBuilder.CreateBlankButton("TestButton2")
 				.AddTextVisual("I\'m a test button!", out _);
+
+				newScreen.StandardButtonBuilder.CreateSeedInput(out _);
 
 				// ------------- Main screen test ---------------
 				var modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
