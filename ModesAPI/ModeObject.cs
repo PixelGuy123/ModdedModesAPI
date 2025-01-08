@@ -168,6 +168,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <summary>
 		/// The description text that appears below buttons (they are only usable in custom screens to avoid unexpected changes in main screens).
 		/// </summary>
+		/// <exception cref="System.NotSupportedException"></exception>
 		public TextMeshProUGUI DescriptionText { get
 			{
 				if (!allowedToChangeDescriptionText)
@@ -202,7 +203,7 @@ namespace ModdedModesAPI.ModesAPI
 		internal bool allowedToChangeDescriptionText = true;
 
 		/// <summary>
-		/// The <see cref="TooltipController"/> taht this class holds.
+		/// The <see cref="TooltipController"/> that this class holds.
 		/// </summary>
 		public TooltipController ToolTipControl { get; private set; }
 
