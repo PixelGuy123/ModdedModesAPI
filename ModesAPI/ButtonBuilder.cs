@@ -178,22 +178,20 @@ namespace ModdedModesAPI.ModesAPI
 		}
 		/// <summary>
 		/// Creates a label for the screen.
-		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
-		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
+		/// <param name="position">The position the label will stay in.</param>
 		/// <param name="textKey">The subtitle key for the label.</param>
 		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
-		public TextMeshProUGUI CreateTextLabel(string textKey) =>
-			CreateTextLabel(textKey, false);
+		public TextMeshProUGUI CreateTextLabel(Vector2 position, string textKey) =>
+			CreateTextLabel(position, textKey, false);
 		/// <summary>
 		/// Creates a label for the screen.
-		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
-		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
+		/// <param name="position">The position the label will stay in.</param>
 		/// <param name="textKey">The subtitle key for the label.</param>
 		/// <param name="encrypted">If the subtitle is encrypted by the game's standard encryption or not.</param>
 		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
-		public TextMeshProUGUI CreateTextLabel(string textKey, bool encrypted)
+		public TextMeshProUGUI CreateTextLabel(Vector2 position, string textKey, bool encrypted)
 		{
 			var text = new GameObject("GenericLabel")
 			{
@@ -202,6 +200,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			text.transform.SetParent(modeObject.ScreenTransform);
 			text.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
+			text.rectTransform.localPosition = position;
 			text.rectTransform.sizeDelta = new(250f, 33f);
 			text.alignment = TextAlignmentOptions.Top;
 			text.color = Color.black;
@@ -214,8 +213,6 @@ namespace ModdedModesAPI.ModesAPI
 			var loc = text.gameObject.AddComponent<TextLocalizer>();
 			loc.key = textKey;
 			loc.encrypted = encrypted;
-
-			modeObject.manager.AddButton(text.transform);
 
 			return text;
 		}
