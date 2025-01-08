@@ -119,6 +119,7 @@ namespace ModdedModesAPI.ModesAPI
 
 		/// <summary>
 		/// This static constructor will create an instance of <see cref="ModeObject"/> assigned to an existing selection screen.
+		/// <para><strong>WARNING: Only use this if you know what you're doing.</strong></para>
 		/// </summary>
 		/// <param name="parent">The selection screen transform's (Ex.: The <see cref="MainModeButtonController"/> object's transform).</param>
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
