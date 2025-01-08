@@ -82,6 +82,8 @@ namespace ModdedModesAPI.ModesAPI
 		}
 		/// <summary>
 		/// Creates a button that actually redirects you to a level (like the Hide-and-seek button).
+		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
 		/// <param name="sceneToStart">The <see cref="SceneObject"/> that the game will load.</param>
 		/// <param name="createsASave">If the button triggers the game to create a save for that level.</param>
@@ -176,6 +178,8 @@ namespace ModdedModesAPI.ModesAPI
 		}
 		/// <summary>
 		/// Creates a label for the screen.
+		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
 		/// <param name="textKey">The subtitle key for the label.</param>
 		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
@@ -183,6 +187,8 @@ namespace ModdedModesAPI.ModesAPI
 			CreateTextLabel(textKey, false);
 		/// <summary>
 		/// Creates a label for the screen.
+		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// <para>DON'T change its position, you can always insert a new position slot if you're making it in a blank screen.</para>
 		/// </summary>
 		/// <param name="textKey">The subtitle key for the label.</param>
 		/// <param name="encrypted">If the subtitle is encrypted by the game's standard encryption or not.</param>
