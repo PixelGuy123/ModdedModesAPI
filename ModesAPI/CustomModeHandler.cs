@@ -11,10 +11,10 @@ namespace ModdedModesAPI.ModesAPI
 		/// <summary>
 		/// An event that expects every receiver to create their own screens or buttons. Use the <see cref="ModeObject"/> static constructors to make your own mode/screen/buttons from it.
 		/// </summary>
-		public static event Action<MainMenu> OnMainMenuInitialize;
+		public static event Action OnMainMenuInitialize;
 
-		internal static void InvokeMainMenuInit(MainMenu menu) =>
-			OnMainMenuInitialize?.Invoke(menu);
+		internal static void InvokeMainMenuInit() =>
+			OnMainMenuInitialize?.Invoke();
 		
 
 		internal static List<ModeObject> existingModeObjects = [];

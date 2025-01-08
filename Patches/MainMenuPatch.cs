@@ -2,6 +2,7 @@
 using ModdedModesAPI.BepInEx;
 using ModdedModesAPI.ModesAPI;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 namespace ModdedModesAPI.Patches
@@ -9,7 +10,7 @@ namespace ModdedModesAPI.Patches
 	[HarmonyPatch(typeof(MainMenu), "Start")]
 	internal static class MainMenuPatch
 	{
-		static void Postfix(MainMenu __instance)
+		static void Postfix()
 		{
 			if (ResourceStorage.togglersSheet == null)
 			{
@@ -21,10 +22,37 @@ namespace ModdedModesAPI.Patches
 				}
 			}
 
-			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
-			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen).SetThePageButtonsAxis(new(195f, 75f));
+			if (ResourceStorage.backArrowSheet == null)
+			{
+				ResourceStorage.backArrowSheet = new Sprite[2];
+				for (int i = 0; i < 2; i++)
+				{
+					string name = "BackArrow_" + i;
+					ResourceStorage.backArrowSheet[i] = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.GetInstanceID() > 0 && x.name == name);
+				}
+			}
 
-			CustomModesHandler.InvokeMainMenuInit(__instance);
+			if (!ResourceStorage.cursorPre)
+				ResourceStorage.cursorPre = Resources.FindObjectsOfTypeAll<CursorController>().First(x => x.GetInstanceID() > 0);
+
+			if (!ResourceStorage.bottomPre)
+				ResourceStorage.bottomPre = Resources.FindObjectsOfTypeAll<RectTransform>().First(x => x.GetInstanceID() > 0 && x.name == "Bottom");
+
+			if (!ResourceStorage.tooltipBase)
+				ResourceStorage.tooltipBase = Resources.FindObjectsOfTypeAll<RectTransform>().First(x => x.GetInstanceID() > 0 && x.name == "TooltipBase");
+
+			var mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
+			mod.IsLinked = true;
+			mod.allowedToChangeDescriptionText = false;
+			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
+
+			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
+			mod.SetThePageButtonsAxis(new(195f, 75f));
+			mod.allowedToChangeDescriptionText = false;
+			mod.IsLinked = true;
+			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
+
+			CustomModesHandler.InvokeMainMenuInit();
 
 			CustomModesHandler.existingModeObjects.Clear(); // Clears out since no ModeObject should be instantiated after the invoke
 		}

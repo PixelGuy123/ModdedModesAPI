@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,16 +9,21 @@ namespace ModdedModesAPI.ModesAPI
 	/// </summary>
 	public class ButtonBuilder(ModeObject modeObject)
 	{
-		internal StandardMenuButton CreateBlankButton(string name, Sprite visual, bool registerButton = true) // Internal, because it's just a method to literally create a blank button
+		/// <summary>
+		/// Create a blank button with no additional functionality. Only use this method if you want to create something "out of the box".
+		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// </summary>
+		/// <param name="name">The name of the button's <see cref="GameObject"/></param>
+		/// <returns>A button instance.</returns>
+		public StandardMenuButton CreateBlankButton(string name) =>
+			CreateBlankButton(name, true);
+		internal StandardMenuButton CreateBlankButton(string name, bool registerButton = true) // Internal, because it's just a method to literally create a blank button
 		{
 			var but = new GameObject(name)
 			{
 				tag = "Button",
 				layer = LayerMask.NameToLayer("UI")
 			}.AddComponent<StandardMenuButton>();
-			but.image = but.gameObject.AddComponent<Image>();
-			but.image.sprite = visual;
-			but.unhighlightOnEnable = true;
 
 			but.transform.SetParent(modeObject.ScreenTransform);
 			but.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
@@ -37,40 +42,46 @@ namespace ModdedModesAPI.ModesAPI
 
 			return but;
 		}
+		/// <summary>
+		/// Creates a button that changes screens.
+		/// <para>Note that the button created will be placed on a pre-set position in the screen.</para>
+		/// </summary>
+		/// <param name="screenToGo">The screen that the button will redirect the player to.</param>
+		/// <param name="transitionTime">The time the transition takes (by default, standard value from the game).</param>
+		/// <param name="transitionType">The transition type it uses (by default, standard value from the game).</param>
+		/// <returns>The button instance.</returns>
+		public StandardMenuButton CreateTransitionButton(ModeObject screenToGo, float transitionTime = 0.0167f, UiTransition transitionType = UiTransition.Dither) =>
+			CreateTransitionButton(screenToGo, false, transitionTime, transitionType);
 
-		public StandardMenuButton CreateModeButton<G, LV>(string nameKey, Sprite visual, G manager, LV builder) where G : BaseGameManager where LV : LevelBuilder
+		internal StandardMenuButton CreateTransitionButton(ModeObject screenToGo, bool isABackButton, float transitionTime = 0.0167f, UiTransition transitionType = UiTransition.Dither)
 		{
-			var but = CreateBlankButton(Singleton<LocalizationManager>.Instance.GetLocalizedText(nameKey, false), visual);
+			if (!isABackButton)
+			{
+				if (screenToGo.IsLinked)
+					throw new System.InvalidOperationException($"Cannot create transition button because the ModeObject ({screenToGo.ScreenTransform}) is already linked to another transition button.");
+
+				screenToGo.CreateLink(modeObject);
+			}
+
+			var but = CreateBlankButton("GenericTransitionButton", !isABackButton);
+			but.OnPress.AddListener(() =>
+			{
+				modeObject.ScreenTransform.gameObject.SetActive(false);
+				screenToGo.ScreenTransform.gameObject.SetActive(true);
+			});
+			but.transitionOnPress = true;
+			but.transitionType = transitionType;
+			but.transitionTime = transitionTime;
+			return but;
+		}
+
+		public StandardMenuButton CreateModeButton<G, LV>(G manager = null, LV builder = null) where G : BaseGameManager where LV : LevelBuilder
+		{
+			var but = CreateBlankButton("GenericModeButton");
 
 			//.. make it start a game, like hide and seek does
 
 			return but;
-		}
-
-		public StandardMenuButton CreateModeButton<G>(string nameKey, Sprite visual, G manager, LevelBuilderType lvlType) where G : BaseGameManager =>
-			lvlType switch
-			{
-				LevelBuilderType.LevelGenerator => CreateModeButton(nameKey, visual, manager, Resources.FindObjectsOfTypeAll<LevelGenerator>().First(x => x.GetInstanceID() > 0)),
-				LevelBuilderType.LevelLoader => CreateModeButton(nameKey, visual, manager, Resources.FindObjectsOfTypeAll<LevelLoader>().First(x => x.GetInstanceID() > 0)),
-				_ => throw new System.ArgumentException("Invalid LevelBuilderType given.")
-			};
-		public StandardMenuButton CreateModeButton<LV>(string nameKey, Sprite visual, ManagerType manType, LV builder) where LV : LevelBuilder =>
-			manType switch
-			{
-				ManagerType.MainGameManager => CreateModeButton(nameKey, visual, Resources.FindObjectsOfTypeAll<MainGameManager>().First(x => x.GetInstanceID() > 0), builder),
-				ManagerType.EndlessGameManager => CreateModeButton(nameKey, visual, Resources.FindObjectsOfTypeAll<EndlessGameManager>().First(x => x.GetInstanceID() > 0), builder),
-				_ => throw new System.ArgumentException("Invalid LevelBuilderType given.")
-			};
-
-		public StandardMenuButton CreateModeButton(string nameKey, Sprite visual, ManagerType manType, LevelBuilderType builder)
-		{
-			var gen = builder == LevelBuilderType.LevelGenerator ?
-				Resources.FindObjectsOfTypeAll<LevelGenerator>().First(x => x.GetInstanceID() > 0) : Resources.FindObjectsOfTypeAll<LevelBuilder>().First(x => x.GetInstanceID() > 0);
-
-			BaseGameManager manager = manType == ManagerType.MainGameManager ?
-				Resources.FindObjectsOfTypeAll<MainGameManager>().First(x => x.GetInstanceID() > 0) : Resources.FindObjectsOfTypeAll<EndlessGameManager>().First(x => x.GetInstanceID() > 0);
-
-			return CreateModeButton(nameKey, visual, manager, gen); // I hope it works with base types lol
 		}
 
 
@@ -86,6 +97,19 @@ namespace ModdedModesAPI.ModesAPI
 			but.OnHighlight.AddListener(() => tipController.UpdateTooltip(toolTipKey));
 			but.OffHighlight.AddListener(tipController.CloseTooltip);
 		}
+		/// <summary>
+		/// Allows the button to have a description below when hovering the cursor on.
+		/// <para>When this method is used by the first time, in a blank screen, it creates a text object to display the description below.</para>
+		/// <para>This text object uses the default settings from the other selection screens. You can modify this text by using the <see cref="ModeObject.DescriptionText"/> property.</para>
+		/// </summary>
+		/// <param name="but">The button instance.</param>
+		/// <param name="descriptionKey">The subtitle key that the description has, to be displayed.</param>
+		public void AddDescriptionText(StandardMenuButton but, string descriptionKey)
+		{
+			but.eventOnHigh = true;
+			TextLocalizer text = (modeObject.allowedToChangeDescriptionText ? modeObject.DescriptionText : modeObject.descriptionTextRef).GetComponent<TextLocalizer>();
+			but.OnHighlight.AddListener(() => text.GetLocalizedText(descriptionKey));
+		}
 
 		readonly ModeObject modeObject = modeObject;
 	}
@@ -95,11 +119,65 @@ namespace ModdedModesAPI.ModesAPI
 	public static class ButtonExtensions
 	{
 		/// <summary>
+		/// Adds a visual appearance for the button.
+		/// <para>This is usually used for making icons, to change the size of the visual, change the <see cref="RectTransform.sizeDelta"/> property.</para>
+		/// </summary>
+		/// <param name="but">The button instance.</param>
+		/// <param name="visual">The sprite it'll use to display.</param>
+		/// <returns>The button instance.</returns>
+		public static StandardMenuButton AddVisual(this StandardMenuButton but, Sprite visual)
+		{
+			but.image = but.gameObject.AddComponent<Image>();
+			but.image.sprite = visual;
+			but.unhighlightOnEnable = true;
+			return but;
+		}
+		/// <summary>
+		/// Adds a text appearance for the button. It uses the same properties that the other buttons uses for the text mesh.
+		/// <para>It also sets a default size delta of </para>
+		/// </summary>
+		/// <param name="but">The button instance.</param>
+		/// <param name="textKey">The subtitle key this button will use (every menu button uses a <see cref="TextLocalizer"/>).</param>
+		/// <param name="textMesh">The text mesh created by the method.</param>
+		/// <returns>The button instance.</returns>
+		public static StandardMenuButton AddTextVisual(this StandardMenuButton but, string textKey, out TextMeshProUGUI textMesh) =>
+			but.AddTextVisual(textKey, false, out textMesh);
+		/// <summary>
+		/// Adds a text appearance for the button. It uses the same properties that the other buttons uses for the text mesh.
+		/// <para>It also sets a default size delta of </para>
+		/// </summary>
+		/// <param name="but">The button instance.</param>
+		/// <param name="textKey">The subtitle key this button will use (every menu button uses a <see cref="TextLocalizer"/>).</param>
+		/// <param name="encrypted">Tells the <see cref="TextLocalizer"/> if the subtitle key used is encrypted using the game's encryption standards.</param>
+		/// <param name="textMesh">The text mesh created by the method.</param>
+		/// <returns>The button instance.</returns>
+		public static StandardMenuButton AddTextVisual(this StandardMenuButton but, string textKey, bool encrypted, out TextMeshProUGUI textMesh)
+		{
+			textMesh = but.gameObject.AddComponent<TextMeshProUGUI>();
+			but.text = textMesh;
+			but.underlineOnHigh = true;
+
+			textMesh.alignment = TextAlignmentOptions.Center;
+			textMesh.color = Color.black;
+			textMesh.fontSizeMin = 18;
+			textMesh.fontSizeMax = 72;
+
+			textMesh.gameObject.AddComponent<TextClickableInit>().text = textMesh; // To make sure the cursor actually sees the button (for some reason, setting raycastTarget to true earlier doesn't work)
+
+			var localizer = but.gameObject.AddComponent<TextLocalizer>();
+			localizer.encrypted = encrypted;
+			localizer.key = textKey;
+
+			return but;
+		}
+
+		/// <summary>
 		/// Adds a highlight animation, in the form of sprites, to the button.
 		/// </summary>
 		/// <param name="but">The button instance.</param>
 		/// <param name="highlightOn">Display sprite when the cursor is hovering the button.</param>
 		/// <param name="highlightOff">Display sprite when the cursor is not hovering the button.</param>
+		/// <returns>The button instance.</returns>
 		public static StandardMenuButton AddHighlightAnimation(this StandardMenuButton but, Sprite highlightOn, Sprite highlightOff)
 		{
 			but.swapOnHigh = true;
@@ -107,57 +185,17 @@ namespace ModdedModesAPI.ModesAPI
 			but.unhighlightedSprite = highlightOff;
 			return but;
 		}
+	}
 
-		/// <summary>
-		/// Adds a transition to the button.
-		/// </summary>
-		/// <param name="but">The button instance</param>
-		/// <param name="transitionTime">The transition time.</param>
-		/// <param name="transitionType">The transition type.</param>
-		/// <param name="toDisable">The "scene" to be disabled when switching screens.</param>
-		/// <param name="toEnable">The "scene" to be enabled when switching screens.</param>
-		/// <returns></returns>
-		public static StandardMenuButton AddTransitionOnPress(this StandardMenuButton but, float transitionTime, UiTransition transitionType, Transform toDisable, Transform toEnable)
+	class TextClickableInit : MonoBehaviour
+	{
+		void Start()
 		{
-			but.OnPress.AddListener(() =>
-			{
-				toDisable.gameObject.SetActive(false);
-				toEnable.gameObject.SetActive(true);
-			});
-			but.transitionOnPress = true;
-			but.transitionType = transitionType;
-			but.transitionTime = transitionTime;
-			return but;
+			text.raycastTarget = true;
+			Destroy(this);
 		}
-	}
 
-	/// <summary>
-	/// If you will use an existent <see cref="LevelBuilder"/> inherited class from the game, use this enum for <see cref="ButtonBuilder.CreateModeButton{G}(string, Sprite, G, LevelBuilderType)"/>
-	/// </summary>
-	public enum LevelBuilderType
-	{
-		/// <summary>
-		/// The <see cref="LevelGenerator"/> type
-		/// </summary>
-		LevelGenerator,
-		/// <summary>
-		/// The <see cref="LevelLoader"/> type
-		/// </summary>
-		LevelLoader
-	}
-
-	/// <summary>
-	/// If you will use an existent <see cref="BaseGameManager"/> inherited class from the game, use this enum for <see cref="ButtonBuilder.CreateModeButton{LV}(string, Sprite, ManagerType, LV)"/>
-	/// </summary>
-	public enum ManagerType
-	{
-		/// <summary>
-		/// The <see cref="MainGameManager"/> type
-		/// </summary>
-		MainGameManager,
-		/// <summary>
-		/// The <see cref="EndlessGameManager"/> type
-		/// </summary>
-		EndlessGameManager
+		[SerializeField]
+		internal TextMeshProUGUI text;
 	}
 }

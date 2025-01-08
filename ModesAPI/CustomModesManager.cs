@@ -12,22 +12,31 @@ namespace ModdedModesAPI.ModesAPI
 			List<StandardMenuButton> buttons = new(modeObject.ScreenTransform.GetComponentsInChildren<StandardMenuButton>());
 			buttons.RemoveAll(x => x.name == "BackButton" || x.name == "SeedInput"); // List all buttons except the ones that aren't "real" buttons
 
-			ModePage firstPage = new(buttons.Count);
 			man.supportsPages = makePageSystem;
-			man.pages = [firstPage];
-
-			for (int i = 0; i < firstPage.buttons.Length; i++)
-				firstPage.buttons[i] = buttons[i];
+			ModePage firstPage;
+			
 
 			if (positions.Length == 0) // If no position given, just use the positions from the buttons
 			{
+				firstPage = new(buttons.Count);
+				man.pages = [firstPage];
+
 				man.available_Positions_For_Each_Screen = new Vector2[buttons.Count];
+
 				for (int i = 0; i < man.available_Positions_For_Each_Screen.Length; i++)
-					man.available_Positions_For_Each_Screen[i] = buttons[i].transform.localPosition; // I have to explicitly make the Vector2 bc it cannot do when it's a Vector3?
+					man.available_Positions_For_Each_Screen[i] = buttons[i].transform.localPosition;
+
+				for (int i = 0; i < firstPage.buttons.Length; i++)
+					firstPage.buttons[i] = buttons[i];
+
 				return man;
 			}
 
+			firstPage = new(positions.Length);
+			man.pages = [firstPage];
+
 			man.available_Positions_For_Each_Screen = positions;
+
 			return man;
 		}
 
