@@ -58,6 +58,9 @@ namespace ModdedModesAPI.ModesAPI
 
 		internal StandardMenuButton CreateTransitionButton(ModeObject screenToGo, bool isABackButton, float transitionTime = 0.0167f, UiTransition transitionType = UiTransition.Dither)
 		{
+			if (screenToGo == modeObject)
+				throw new System.ArgumentException("Target screen cannot be the same screen that the transition button is located in.");
+
 			if (!isABackButton)
 			{
 				if (screenToGo.IsLinked)

@@ -69,6 +69,8 @@ namespace ModdedModesAPI.ModesAPI
 			ScreenTransform = (RectTransform)screenCanvas.transform;
 			manager = CustomModesManager.AttachToSelectionScreen(this, hasPageSystem, positions);
 
+			if (hasPageSystem)
+				CreateTogglers();
 			CreateToolTipBase();
 		}
 		private ModeObject(Transform parent) : this() // Expects an object to be the parent (such as the ModeSelectionScreen, it's a parent of many buttons inside it)
@@ -81,30 +83,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			CustomModesHandler.existingModeObjects.Add(this);
 
-			manager.pageTogglers = new StandardMenuButton[2];
-
-			var leftToggler = StandardButtonBuilder.CreateBlankButton("PageLeftToggler", false) // Left toggler
-				.AddHighlightAnimation(ResourceStorage.togglersSheet[0], ResourceStorage.togglersSheet[2])
-				.AddVisual(ResourceStorage.togglersSheet[2]);
-
-			leftToggler.OnPress.AddListener(() => manager.SwitchPage(false));
-			((RectTransform)leftToggler.transform).sizeDelta = Vector2.one * 32f;
-
-			leftToggler.transform.localPosition = Vector2.left * togglerOffset;
-
-			manager.pageTogglers[0] = leftToggler;
-
-			var rightToggler = StandardButtonBuilder.CreateBlankButton("PageRightToggler", false) // Right toggler
-				.AddHighlightAnimation(ResourceStorage.togglersSheet[1], ResourceStorage.togglersSheet[3])
-				.AddVisual(ResourceStorage.togglersSheet[1]);
-
-			rightToggler.OnPress.AddListener(() => manager.SwitchPage(true));
-			((RectTransform)rightToggler.transform).sizeDelta = Vector2.one * 32f;
-
-			rightToggler.transform.localPosition = Vector2.right * togglerOffset;
-
-			manager.pageTogglers[1] = rightToggler;
-
+			CreateTogglers();
 			CreateToolTipBase();
 		}
 
@@ -171,7 +150,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <exception cref="System.InvalidOperationException"></exception>
 		public void SetThePageButtonsAxis(Vector2 offset)
 		{
-			if (!manager.supportsPages || allowAxisChanges)
+			if (!manager.supportsPages || !allowAxisChanges)
 				throw new System.InvalidOperationException("This ModeObject instance does not support pages or it isn\'t allowed to the change the page\'s buttons\' position.");
 			offset.x = Mathf.Min(offset.x - togglerOffset, togglerTouchLimit);
 			manager.UpdateTogglersOffset(offset);
@@ -271,6 +250,33 @@ namespace ModdedModesAPI.ModesAPI
 			ToolTipControl.yBuffer = 8;
 			ToolTipControl.xMin = 10f;
 			ToolTipControl.xMax = 470f;
+		}
+
+		void CreateTogglers()
+		{
+			manager.pageTogglers = new StandardMenuButton[2];
+
+			var leftToggler = StandardButtonBuilder.CreateBlankButton("PageLeftToggler", false) // Left toggler
+				.AddHighlightAnimation(ResourceStorage.togglersSheet[0], ResourceStorage.togglersSheet[2])
+				.AddVisual(ResourceStorage.togglersSheet[2]);
+
+			leftToggler.OnPress.AddListener(() => manager.SwitchPage(false));
+			((RectTransform)leftToggler.transform).sizeDelta = Vector2.one * 32f;
+
+			leftToggler.transform.localPosition = Vector2.left * togglerOffset;
+
+			manager.pageTogglers[0] = leftToggler;
+
+			var rightToggler = StandardButtonBuilder.CreateBlankButton("PageRightToggler", false) // Right toggler
+				.AddHighlightAnimation(ResourceStorage.togglersSheet[1], ResourceStorage.togglersSheet[3])
+				.AddVisual(ResourceStorage.togglersSheet[1]);
+
+			rightToggler.OnPress.AddListener(() => manager.SwitchPage(true));
+			((RectTransform)rightToggler.transform).sizeDelta = Vector2.one * 32f;
+
+			rightToggler.transform.localPosition = Vector2.right * togglerOffset;
+
+			manager.pageTogglers[1] = rightToggler;
 		}
 
 		// ************************ Internal Getters *************************
