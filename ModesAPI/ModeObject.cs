@@ -37,7 +37,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			leftToggler.OnPress.AddListener(() => manager.SwitchPage(false));
 
-			leftToggler.transform.localPosition = Vector2.left * 230;
+			leftToggler.transform.localPosition = Vector2.left * togglerOffset;
 			((RectTransform)leftToggler.transform).sizeDelta = Vector2.one * 32;
 
 			manager.pageTogglers[0] = leftToggler;
@@ -47,7 +47,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			rightToggler.OnPress.AddListener(() => manager.SwitchPage(true));
 
-			rightToggler.transform.localPosition = Vector2.right * 230;
+			rightToggler.transform.localPosition = Vector2.right * togglerOffset;
 			((RectTransform)rightToggler.transform).sizeDelta = Vector2.one * 32;
 
 			manager.pageTogglers[1] = rightToggler;
@@ -93,15 +93,16 @@ namespace ModdedModesAPI.ModesAPI
 		// ********************* Public Methods ***********************
 
 		/// <summary>
-		/// By default, all page buttons are built in (0,0). But you can change the axis of the Y axis through this method. 
+		/// By default, all page buttons are built in (230,0). But you can change the both axis through this method. 
 		/// </summary>
-		/// <param name="offset">The offset it goes to.</param>
+		/// <param name="offset">The offset it goes to (note that the X axis starts from (-230,0), the right page button will mirror the X axis from the left one).</param>
 		/// <exception cref="System.NotSupportedException"></exception>
-		public void SetThePageButtonsYAxis(float offset)
+		public void SetThePageButtonsAxis(Vector2 offset)
 		{
 			if (!manager.supportsPages)
 				throw new System.NotSupportedException("This ModeObject instance was set to not support pages. The page toggler position cannot be changed then.");
-			manager.UpdateTogglersYOffset(offset);
+			offset.x = Mathf.Min(offset.x - togglerOffset, togglerTouchLimit);
+			manager.UpdateTogglersOffset(offset);
 		}
 
 		/// <summary>
@@ -142,6 +143,8 @@ namespace ModdedModesAPI.ModesAPI
 		public Transform ScreenTransform { get; }
 
 		readonly internal CustomModesManager manager;
+
+		const float togglerOffset = 230f, togglerTouchLimit = -20f;
 	}
 	/// <summary>
 	/// An enum that refers to two existing screens in-game. Can be used for <see cref="ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen)"/>

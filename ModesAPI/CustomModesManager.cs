@@ -31,14 +31,13 @@ namespace ModdedModesAPI.ModesAPI
 			return man;
 		}
 
-		internal void UpdateTogglersYOffset(float offset)
+		internal void UpdateTogglersOffset(Vector2 offset)
 		{
-			for (int i = 0; i < pageTogglers.Length; i++)
-			{
-				var pos = pageTogglers[i].transform.localPosition;
-				pos.y = offset;
-				pageTogglers[i].transform.localPosition = pos;
-			}
+			// It expects two pageTogglers only (0 is left, 1 is right)
+			pageTogglers[0].transform.localPosition = offset;
+
+			offset.x = -offset.x;
+			pageTogglers[1].transform.localPosition = offset;
 		}
 
 		internal void SwitchPage(bool advanceOne)
