@@ -38,7 +38,7 @@ namespace ModdedModesAPI.ModesAPI
 			but.OnPress = new();
 
 			if (registerButton)
-				modeObject.manager.AddButton(but);
+				modeObject.manager.AddButton(but.transform);
 			else
 				but.transform.localPosition = Vector3.zero;
 
@@ -147,8 +147,6 @@ namespace ModdedModesAPI.ModesAPI
 
 			return but;
 		}
-
-
 		/// <summary>
 		/// Adds a tool tip animation when you hover the cursor on the button.
 		/// </summary>
@@ -175,6 +173,45 @@ namespace ModdedModesAPI.ModesAPI
 			but.eventOnHigh = true;
 			TextLocalizer text = (modeObject.allowedToChangeDescriptionText ? modeObject.DescriptionText : modeObject.descriptionTextRef).GetComponent<TextLocalizer>();
 			but.OnHighlight.AddListener(() => text.GetLocalizedText(descriptionKey));
+		}
+		/// <summary>
+		/// Creates a label for the screen.
+		/// </summary>
+		/// <param name="textKey">The subtitle key for the label.</param>
+		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
+		public TextMeshProUGUI CreateTextLabel(string textKey) =>
+			CreateTextLabel(textKey, false);
+		/// <summary>
+		/// Creates a label for the screen.
+		/// </summary>
+		/// <param name="textKey">The subtitle key for the label.</param>
+		/// <param name="encrypted">If the subtitle is encrypted by the game's standard encryption or not.</param>
+		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
+		public TextMeshProUGUI CreateTextLabel(string textKey, bool encrypted)
+		{
+			var text = new GameObject("GenericLabel")
+			{
+				layer = LayerMask.NameToLayer("UI")
+			}.AddComponent<TextMeshProUGUI>();
+
+			text.transform.SetParent(modeObject.ScreenTransform);
+			text.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
+			text.rectTransform.sizeDelta = new(250f, 33f);
+			text.alignment = TextAlignmentOptions.Top;
+			text.color = Color.black;
+			text.fontSizeMin = 18;
+			text.fontSizeMax = 72;
+
+			if (modeObject.ScreenTransform.childCount != 0)
+				text.transform.SetSiblingIndex(1); // Should avoid being above the cursor
+
+			var loc = text.gameObject.AddComponent<TextLocalizer>();
+			loc.key = textKey;
+			loc.encrypted = encrypted;
+
+			modeObject.manager.AddButton(text.transform);
+
+			return text;
 		}
 
 		readonly ModeObject modeObject = modeObject;

@@ -92,13 +92,13 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		/// <param name="screenName">A name for the screen's <see cref="GameObject"/>.</param>
 		/// <param name="hasPageSystem">If True, this blank screen will follow a similar behavior of pages that the existing ones have.</param>
-		/// <param name="availableButtonPositions">The positions that the buttons created by the <see cref="ModeObject"/> will be fixated to.</param>
+		/// <param name="availablePositions">The positions that the buttons created by the <see cref="ModeObject"/> will be fixated to.</param>
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
 		/// <exception cref="System.InvalidOperationException"></exception>
-		public static ModeObject CreateBlankScreenInstance(string screenName, bool hasPageSystem, params Vector2[] availableButtonPositions)
+		public static ModeObject CreateBlankScreenInstance(string screenName, bool hasPageSystem, params Vector2[] availablePositions)
 		{
 			ThrowIfNotAllowedToInstantiate();
-			return new(screenName, hasPageSystem, availableButtonPositions);
+			return new(screenName, hasPageSystem, availablePositions);
 		}
 
 

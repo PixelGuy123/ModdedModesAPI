@@ -26,8 +26,8 @@ namespace ModdedModesAPI.ModesAPI
 				for (int i = 0; i < man.available_Positions_For_Each_Screen.Length; i++)
 					man.available_Positions_For_Each_Screen[i] = buttons[i].transform.localPosition;
 
-				for (int i = 0; i < firstPage.buttons.Length; i++)
-					firstPage.buttons[i] = buttons[i];
+				for (int i = 0; i < firstPage.uiElements.Length; i++)
+					firstPage.uiElements[i] = buttons[i].gameObject;
 
 				return man;
 			}
@@ -51,27 +51,35 @@ namespace ModdedModesAPI.ModesAPI
 
 		internal void SwitchPage(bool advanceOne)
 		{
-			for (int i = 0; i < pages[pageIdx].buttons.Length; i++)
-				pages[pageIdx].buttons[i]?.gameObject.SetActive(false);
+			for (int i = 0; i < pages[pageIdx].uiElements.Length; i++)
+			{
+				var transform = pages[pageIdx].uiElements[i];
+				if (transform)
+					transform.gameObject.SetActive(false);
+			}
 
 			pageIdx += advanceOne ? 1 : -1;
 			pageIdx = pageIdx < 0 ? pages.Count - 1 : pageIdx % pages.Count;
 
-			for (int i = 0; i < pages[pageIdx].buttons.Length; i++)
-				pages[pageIdx].buttons[i]?.gameObject.SetActive(true);
+			for (int i = 0; i < pages[pageIdx].uiElements.Length; i++)
+			{
+				var transform = pages[pageIdx].uiElements[i];
+				if (transform)
+					transform.gameObject.SetActive(true);
+			}
 		}
 
-		internal void AddButton(StandardMenuButton button)
+		internal void AddButton(Transform uiObj)
 		{
 			for (int i = 0; i < pages.Count; i++)
 			{
-				for (int x = 0; x < pages[i].buttons.Length; x++)
+				for (int x = 0; x < pages[i].uiElements.Length; x++)
 				{
-					if (!pages[i].buttons[x]) // Searches all available slots of each page, to find one that fits
+					if (!pages[i].uiElements[x]) // Searches all available slots of each page, to find one that fits
 					{
-						pages[i].buttons[x] = button;
-						button.transform.localPosition = available_Positions_For_Each_Screen[x]; // Each page *must* have the same positions set, that's a general rule
-						button.gameObject.SetActive(i == pageIdx);
+						pages[i].uiElements[x] = uiObj.gameObject;
+						uiObj.localPosition = available_Positions_For_Each_Screen[x]; // Each page *must* have the same positions set, that's a general rule
+						uiObj.gameObject.SetActive(i == pageIdx);
 						return;
 					}
 				}
@@ -81,11 +89,11 @@ namespace ModdedModesAPI.ModesAPI
 				throw new System.ArgumentOutOfRangeException($"Failed to add a button to the selection screen ({this}) due to the lack of space.");
 
 			var newPage = new ModePage(available_Positions_For_Each_Screen.Length);
-			newPage.buttons[0] = button;
-			button.transform.localPosition = available_Positions_For_Each_Screen[0];
+			newPage.uiElements[0] = uiObj.gameObject;
+			uiObj.localPosition = available_Positions_For_Each_Screen[0];
 
 			pages.Add(newPage);
-			button.gameObject.SetActive((pages.Count - 1) == pageIdx);
+			uiObj.gameObject.SetActive((pages.Count - 1) == pageIdx);
 		}
 
 		int pageIdx = 0;
@@ -100,6 +108,6 @@ namespace ModdedModesAPI.ModesAPI
 
 	internal class ModePage(int buttonsNeeded)
 	{
-		public StandardMenuButton[] buttons = new StandardMenuButton[buttonsNeeded];
+		public GameObject[] uiElements = new GameObject[buttonsNeeded];
 	}
 }
