@@ -160,7 +160,7 @@ namespace ModdedModesAPI.ModesAPI
 		}
 
 		/// <summary>
-		/// This class holds a lot of useful methods to create your button inside the <see cref="ModeObject"/>.
+		/// This class holds a lot of useful methods to create your buttons inside the <see cref="ModeObject"/>.
 		/// </summary>
 		public ButtonBuilder StandardButtonBuilder { get; }
 
@@ -182,7 +182,7 @@ namespace ModdedModesAPI.ModesAPI
 		internal bool allowedToChangeDescriptionText = true;
 
 		/// <summary>
-		/// The <see cref="TooltipController"/> taht this ModeObject holds.
+		/// The <see cref="TooltipController"/> taht this class holds.
 		/// </summary>
 		public TooltipController ToolTipControl { get; private set; }
 
