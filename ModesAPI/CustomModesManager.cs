@@ -46,7 +46,7 @@ namespace ModdedModesAPI.ModesAPI
 				pages[pageIdx].buttons[i]?.gameObject.SetActive(false);
 
 			pageIdx += advanceOne ? 1 : -1;
-			pageIdx %= pages.Count;
+			pageIdx = pageIdx < 0 ? pages.Count - 1 : pageIdx % pages.Count;
 
 			for (int i = 0; i < pages[pageIdx].buttons.Length; i++)
 				pages[pageIdx].buttons[i]?.gameObject.SetActive(true);

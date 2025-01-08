@@ -22,7 +22,7 @@ namespace ModdedModesAPI.Patches
 			}
 
 			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
-			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen).SetThePageButtonsAxis(new(195f, 85f));
+			ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen).SetThePageButtonsAxis(new(195f, 75f));
 
 			CustomModesHandler.InvokeMainMenuInit(__instance);
 
