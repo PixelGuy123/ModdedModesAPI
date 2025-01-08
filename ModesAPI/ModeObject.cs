@@ -93,11 +93,11 @@ namespace ModdedModesAPI.ModesAPI
 		// ********************* Public Methods ***********************
 
 		/// <summary>
-		/// By default, all button pages are built in (0,0). But you can change the axis of the Y axis through this method. 
+		/// By default, all page buttons are built in (0,0). But you can change the axis of the Y axis through this method. 
 		/// </summary>
 		/// <param name="offset">The offset it goes to.</param>
 		/// <exception cref="System.NotSupportedException"></exception>
-		public void SetTheButtonPageYAxis(float offset)
+		public void SetThePageButtonsYAxis(float offset)
 		{
 			if (!manager.supportsPages)
 				throw new System.NotSupportedException("This ModeObject instance was set to not support pages. The page toggler position cannot be changed then.");

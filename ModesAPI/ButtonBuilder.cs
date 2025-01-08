@@ -22,7 +22,8 @@ namespace ModdedModesAPI.ModesAPI
 
 			but.transform.SetParent(modeObject.ScreenTransform);
 			but.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
-			but.transform.SetSiblingIndex(but.transform.parent.childCount - 1); // Should avoid being above the cursor
+			if (modeObject.ScreenTransform.childCount != 0)
+				but.transform.SetSiblingIndex(1); // Should avoid being above the cursor
 
 			but.OnRelease = new();
 			but.OnHighlight = new();

@@ -44,13 +44,13 @@ namespace ModdedModesAPI.ModesAPI
 		internal void SwitchPage(bool advanceOne)
 		{
 			for (int i = 0; i < pages[pageIdx].buttons.Length; i++)
-				pages[pageIdx].buttons[i].gameObject.SetActive(false);
+				pages[pageIdx].buttons[i]?.gameObject.SetActive(false);
 
 			pageIdx += advanceOne ? 1 : -1;
 			pageIdx %= pages.Count;
 
 			for (int i = 0; i < pages[pageIdx].buttons.Length; i++)
-				pages[pageIdx].buttons[i].gameObject.SetActive(true);
+				pages[pageIdx].buttons[i]?.gameObject.SetActive(true);
 		}
 
 		internal void AddButton(StandardMenuButton button)
