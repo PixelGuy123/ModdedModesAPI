@@ -1,8 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using ModdedModesAPI.ModesAPI;
-using UnityEngine;
+//using ModdedModesAPI.ModesAPI;
+//using UnityEngine;
 
 namespace ModdedModesAPI.BepInEx
 {
