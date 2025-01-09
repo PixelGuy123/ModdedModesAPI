@@ -69,7 +69,7 @@ namespace ModdedModesAPI.ModesAPI
 				screenToGo.CreateLink(modeObject);
 			}
 
-			var but = CreateBlankButton("GenericTransitionButton", !isABackButton);
+			var but = CreateBlankButton("TransitionButton", !isABackButton);
 			but.OnPress.AddListener(() =>
 			{
 				modeObject.ScreenTransform.gameObject.SetActive(false);
@@ -93,7 +93,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <returns></returns>
 		public StandardMenuButton CreateModeButton(SceneObject sceneToStart, bool createsASave = false, int lives = 2, Mode mode = Mode.Main, ElevatorScreen elevatorScreen = null)
 		{
-			var but = CreateBlankButton("GenericModeButton");
+			var but = CreateBlankButton("ModeButton");
 
 
 			but.OnPress.AddListener(() =>
@@ -142,6 +142,7 @@ namespace ModdedModesAPI.ModesAPI
 			input.tmp = text;
 
 			text.alignment = TextAlignmentOptions.Top;
+			text.rectTransform.sizeDelta = new(400f, 50f);
 
 			but.OnPress.AddListener(input.ChangeMode);
 
@@ -193,7 +194,7 @@ namespace ModdedModesAPI.ModesAPI
 		/// <returns>A <see cref="TextMeshProUGUI"/> instance.</returns>
 		public TextMeshProUGUI CreateTextLabel(Vector2 position, string textKey, bool encrypted)
 		{
-			var text = new GameObject("GenericLabel")
+			var text = new GameObject(Singleton<LocalizationManager>.Instance.GetLocalizedText(textKey, encrypted) + "_Label")
 			{
 				layer = LayerMask.NameToLayer("UI")
 			}.AddComponent<TextMeshProUGUI>();
@@ -274,6 +275,8 @@ namespace ModdedModesAPI.ModesAPI
 			var localizer = but.gameObject.AddComponent<TextLocalizer>();
 			localizer.encrypted = encrypted;
 			localizer.key = textKey;
+
+			but.name = $"{Singleton<LocalizationManager>.Instance.GetLocalizedText(textKey, encrypted)}_{but.name}";
 
 			return but;
 		}
