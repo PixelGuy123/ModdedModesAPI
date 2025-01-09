@@ -1,8 +1,8 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using ModdedModesAPI.ModesAPI;
-using UnityEngine;
+//using ModdedModesAPI.ModesAPI;
+//using UnityEngine;
 
 namespace ModdedModesAPI.BepInEx
 {
@@ -20,11 +20,13 @@ namespace ModdedModesAPI.BepInEx
 			// Funny Experiments
 			//CustomModesHandler.OnMainMenuInitialize += () =>
 			//{
-			//	var templateObject = ModeObject.CreateBlankScreenInstance("myScreen", false, new(0f, 65f), new(-75f, 0f), new(75f, 0f));
+			//	var modeObj = ModeObject.CreateBlankScreenInstance("coolScreen", false, Vector2.zero);
+			//	modeObj.StandardButtonBuilder.CreateSeedInput(out _);
+			//	modeObj.StandardButtonBuilder.CreateTextLabel(Vector3.zero, "This is gonna be really cool >:O");
 
-			//	var modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
-			//	modeObj.StandardButtonBuilder.CreateTransitionButton(templateObject)
-			//	.AddTextVisual("myButton", out _);
+			//	modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
+			//	modeObj.StandardButtonBuilder.CreateTransitionButton(modeObj)
+			//	.AddTextVisual("HelloGuys", out _);
 			//};
 
 		}
