@@ -20,13 +20,7 @@ namespace ModdedModesAPI.BepInEx
 			// Funny Experiments
 			//CustomModesHandler.OnMainMenuInitialize += () =>
 			//{
-			//	var modeObj = ModeObject.CreateBlankScreenInstance("coolScreen", false, Vector2.zero);
-			//	modeObj.StandardButtonBuilder.CreateSeedInput(out _);
-			//	modeObj.StandardButtonBuilder.CreateTextLabel(Vector3.zero, "This is gonna be really cool >:O");
-
-			//	modeObj = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen);
-			//	modeObj.StandardButtonBuilder.CreateTransitionButton(modeObj)
-			//	.AddTextVisual("HelloGuys", out _);
+				
 			//};
 
 		}

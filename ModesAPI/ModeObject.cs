@@ -69,9 +69,9 @@ namespace ModdedModesAPI.ModesAPI
 			ScreenTransform = (RectTransform)screenCanvas.transform;
 			manager = CustomModesManager.AttachToSelectionScreen(this, hasPageSystem, positions);
 
+			CreateToolTipBase();
 			if (hasPageSystem)
 				CreateTogglers();
-			CreateToolTipBase();
 		}
 		private ModeObject(Transform parent) : this() // Expects an object to be the parent (such as the ModeSelectionScreen, it's a parent of many buttons inside it)
 		{
@@ -83,8 +83,8 @@ namespace ModdedModesAPI.ModesAPI
 
 			CustomModesHandler.existingModeObjects.Add(this);
 
-			CreateTogglers();
 			CreateToolTipBase();
+			CreateTogglers();
 		}
 
 		/// <summary>
@@ -132,6 +132,7 @@ namespace ModdedModesAPI.ModesAPI
 			{
 				SelectionScreen.MainScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<MainModeButtonController>()[0].transform),
 				SelectionScreen.ChallengesScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
+				SelectionScreen.EndlessScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickEndlessMap").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")
 			};
 
@@ -299,8 +300,12 @@ namespace ModdedModesAPI.ModesAPI
 		/// </summary>
 		MainScreen,
 		/// <summary>
-		/// The challenges selection screen
+		/// The challenges mode selection screen
 		/// </summary>
-		ChallengesScreen
+		ChallengesScreen,
+		/// <summary>
+		/// The endless mode selection screen
+		/// </summary>
+		EndlessScreen
 	}
 }

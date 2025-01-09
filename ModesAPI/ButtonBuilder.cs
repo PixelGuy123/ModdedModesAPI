@@ -30,7 +30,7 @@ namespace ModdedModesAPI.ModesAPI
 			but.transform.SetParent(modeObject.ScreenTransform);
 			but.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
 			if (modeObject.ScreenTransform.childCount != 0)
-				but.transform.SetSiblingIndex(1); // Should avoid being above the cursor
+				but.transform.SetSiblingIndex(modeObject.ScreenTransform.Find("TooltipBase").GetSiblingIndex()); // Should avoid being above the cursor
 
 			but.OnRelease = new();
 			but.OnHighlight = new();
@@ -38,7 +38,7 @@ namespace ModdedModesAPI.ModesAPI
 			but.OnPress = new();
 
 			if (registerButton)
-				modeObject.manager.AddButton(but.transform);
+				modeObject.manager.AddButton(but);
 			else
 				but.transform.localPosition = Vector3.zero;
 
@@ -263,10 +263,11 @@ namespace ModdedModesAPI.ModesAPI
 			but.text = textMesh;
 			but.underlineOnHigh = true;
 
-			textMesh.alignment = TextAlignmentOptions.Center;
+			textMesh.alignment = TextAlignmentOptions.Top;
 			textMesh.color = Color.black;
 			textMesh.fontSizeMin = 18;
 			textMesh.fontSizeMax = 72;
+			textMesh.rectTransform.sizeDelta = new(192f, 32f);
 
 			textMesh.gameObject.AddComponent<TextClickableInit>().text = textMesh; // To make sure the cursor actually sees the button (for some reason, setting raycastTarget to true earlier doesn't work)
 

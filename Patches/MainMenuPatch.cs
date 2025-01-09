@@ -69,6 +69,15 @@ namespace ModdedModesAPI.Patches
 			mod.allowSeedInputCreation = false; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 
+			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.EndlessScreen);
+
+			mod.SetThePageButtonsAxis(new(113f, 90f));
+			mod.allowAxisChanges = false;
+
+			mod.allowedToChangeDescriptionText = false;
+			mod.IsLinked = true;
+			mod.descriptionTextRef = mod.ScreenTransform.Find("LevelText").GetComponent<TextMeshProUGUI>();
+
 			CustomModesHandler.InvokeMainMenuInit();
 
 			CustomModesHandler.existingModeObjects.Clear(); // Clears out since no ModeObject should be instantiated after the invoke
