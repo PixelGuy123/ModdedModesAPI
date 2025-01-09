@@ -49,6 +49,16 @@ namespace ModdedModesAPI.ModesAPI
 			return man;
 		}
 
+		void OnEnable()
+		{
+			for (int i = 0; i < pages.Count; i++)
+			{
+				bool isMyPage = i == pageIdx;
+				for (int x = 0; x < pages[i].buttons.Length; x++)
+					pages[i].buttons[x]?.gameObject.SetActive(isMyPage); // To avoid buttons just getting enabled randomly (main menu has that bc of the save system)
+			}
+		}
+
 		internal void UpdateTogglersOffset(Vector2 offset)
 		{
 			// It expects two pageTogglers only (0 is left, 1 is right)

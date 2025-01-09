@@ -58,6 +58,7 @@ namespace ModdedModesAPI.Patches
 			mod.allowSeedInputCreation = false;
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 			mod.allowAxisChanges = false;
+			mod.allowBackgroundAddition = false;
 
 			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.ChallengesScreen);
 
@@ -68,6 +69,7 @@ namespace ModdedModesAPI.Patches
 			mod.IsLinked = true;
 			mod.allowSeedInputCreation = false; // To avoid making one, there's no point for it in there - make your own screen if you wanna add a challenge with this functionality.
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
+			mod.allowBackgroundAddition = false;
 
 			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.EndlessScreen);
 
@@ -77,6 +79,7 @@ namespace ModdedModesAPI.Patches
 			mod.allowedToChangeDescriptionText = false;
 			mod.IsLinked = true;
 			mod.descriptionTextRef = mod.ScreenTransform.Find("LevelText").GetComponent<TextMeshProUGUI>();
+			mod.allowBackgroundAddition = false;
 
 			CustomModesHandler.InvokeMainMenuInit();
 

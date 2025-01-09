@@ -55,7 +55,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			screenCanvas.transform.position = Vector3.zero;
 
-			var bg = new GameObject("BG").AddComponent<Image>();
+			bg = new GameObject("BG").AddComponent<Image>();
 			bg.transform.SetParent(screenCanvas.transform);
 			bg.transform.localPosition = Vector3.zero;
 			bg.rectTransform.sizeDelta = new(480f, 360f);
@@ -101,25 +101,6 @@ namespace ModdedModesAPI.ModesAPI
 			return new(screenName, hasPageSystem, availablePositions);
 		}
 
-
-		/// <summary>
-		/// This static constructor will create an instance of <see cref="ModeObject"/> assigned to an existing selection screen.
-		/// <para><strong>WARNING: Only use this if you know what you're doing.</strong></para>
-		/// </summary>
-		/// <param name="parent">The selection screen transform's (Ex.: The <see cref="MainModeButtonController"/> object's transform).</param>
-		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
-		/// <exception cref="System.InvalidOperationException"></exception>
-		public static ModeObject CreateModeObjectOverExistingScreen(Transform parent)
-		{
-			ThrowIfNotAllowedToInstantiate();
-
-			int idx = CustomModesHandler.existingModeObjects.FindIndex(x => x.ScreenTransform == parent);
-			if (idx != -1)
-				return CustomModesHandler.existingModeObjects[idx];
-
-			return new(parent);
-		}
-
 		/// <summary>
 		/// This static constructor will create an instance of <see cref="ModeObject"/> assigned to an existing selection screen.
 		/// </summary>
@@ -127,14 +108,27 @@ namespace ModdedModesAPI.ModesAPI
 		/// <returns>An instance of <see cref="ModeObject"/>.</returns>
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="System.InvalidOperationException"></exception>
-		public static ModeObject CreateModeObjectOverExistingScreen(SelectionScreen screen) =>
-			screen switch
+		public static ModeObject CreateModeObjectOverExistingScreen(SelectionScreen screen)
+		{
+			return screen switch
 			{
 				SelectionScreen.MainScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<MainModeButtonController>()[0].transform),
 				SelectionScreen.ChallengesScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
 				SelectionScreen.EndlessScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickEndlessMap").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")
 			};
+
+			static ModeObject CreateModeObjectOverExistingScreen(Transform parent)
+			{
+				ThrowIfNotAllowedToInstantiate();
+
+				int idx = CustomModesHandler.existingModeObjects.FindIndex(x => x.ScreenTransform == parent);
+				if (idx != -1)
+					return CustomModesHandler.existingModeObjects[idx];
+
+				return new(parent);
+			}
+		}
 
 		static void ThrowIfNotAllowedToInstantiate()
 		{
@@ -200,6 +194,24 @@ namespace ModdedModesAPI.ModesAPI
 
 		internal TextMeshProUGUI descriptionTextRef;
 		internal bool allowedToChangeDescriptionText = true;
+
+		/// <summary>
+		/// Property that returns the sprite and sets the sprite used by the background.
+		/// <para>If the screen isn't allowed to have the sprite changed, you'll get an exception.</para>
+		/// </summary>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		public Sprite Background { 
+			get => bg.sprite; 
+			set
+			{
+				if (!allowBackgroundAddition)
+					throw new System.InvalidOperationException($"Cannot change the background of this screen ({ScreenTransform}).");
+				bg.sprite = value;
+			}
+		}
+
+		internal Image bg;
+		internal bool allowBackgroundAddition = true;
 
 		/// <summary>
 		/// The <see cref="TooltipController"/> that this class holds.

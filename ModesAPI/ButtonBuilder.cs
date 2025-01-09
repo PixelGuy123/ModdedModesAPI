@@ -136,6 +136,7 @@ namespace ModdedModesAPI.ModesAPI
 
 			var but = CreateBlankButton("SeedInput", false)
 				.AddTextVisual("Seed: Random", out var text);
+			but.name = "SeedInput";
 			but.transform.localPosition = Vector2.up * 148f;
 
 			input = but.gameObject.AddComponent<SeedInput>();
@@ -216,6 +217,33 @@ namespace ModdedModesAPI.ModesAPI
 			loc.encrypted = encrypted;
 
 			return text;
+		}
+		/// <summary>
+		/// Creates an <see cref="Image"/> instance into the screen.
+		/// </summary>
+		/// <param name="visual">The visual that this image will have.</param>
+		/// <param name="position">The position that this image will be located at.</param>
+		/// <param name="sizeDelta">The size of this image. Try with a size of (100, 100) as a test.</param>
+		/// <returns>An instance of <see cref="Image"/>.</returns>
+		public Image CreateImage(Sprite visual, Vector2 position, Vector2 sizeDelta)
+		{
+			var img = new GameObject(visual.name + "_Image")
+			{
+				layer = LayerMask.NameToLayer("UI")
+			}.AddComponent<Image>();
+
+			img.sprite = visual;
+
+			img.transform.SetParent(modeObject.ScreenTransform);
+			img.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
+			img.rectTransform.localPosition = position;
+			img.rectTransform.sizeDelta = sizeDelta;
+			img.rectTransform.pivot = Vector2.one * 0.5f;
+
+			if (modeObject.ScreenTransform.childCount != 0)
+				img.transform.SetSiblingIndex(1); // Should avoid being above the cursor
+
+			return img;
 		}
 
 		readonly ModeObject modeObject = modeObject;
