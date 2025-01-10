@@ -1,9 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
-using ModdedModesAPI.ModesAPI;
-using System.Linq;
-using UnityEngine;
 
 namespace ModdedModesAPI.BepInEx
 {
@@ -17,20 +14,6 @@ namespace ModdedModesAPI.BepInEx
             logger = Logger;
 			var h = new Harmony(mod_guid);
 			h.PatchAll();
-
-			// Funny Experiments
-			//CustomModesHandler.OnMainMenuInitialize += () =>
-			//{
-			//	var newScreen = ModeObject.CreateBlankScreenInstance("blankScreen", false, Vector3.zero);
-			//	newScreen.StandardButtonBuilder.CreateSeedInput(out _);
-			//	newScreen.Background = Resources.FindObjectsOfTypeAll<Sprite>().First(x => x.name == "ClipBoard_Full");
-
-			//	newScreen.StandardButtonBuilder.CreateImage(newScreen.Background, new(-35f, -55f), Vector2.one * 32f);
-
-			//	ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.MainScreen)
-			//	.StandardButtonBuilder.CreateTransitionButton(newScreen).AddTextVisual("Cool", out _);
-			//};
-
 		}
 	}
 }
