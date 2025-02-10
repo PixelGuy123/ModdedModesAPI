@@ -112,7 +112,7 @@ namespace ModdedModesAPI.ModesAPI
 		{
 			return screen switch
 			{
-				SelectionScreen.MainScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<MainModeButtonController>()[0].transform),
+				SelectionScreen.MainScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<TutorialPrompt>()[0].transform),
 				SelectionScreen.ChallengesScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
 				SelectionScreen.EndlessScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickEndlessMap").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")

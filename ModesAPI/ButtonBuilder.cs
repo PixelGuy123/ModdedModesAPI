@@ -30,7 +30,12 @@ namespace ModdedModesAPI.ModesAPI
 			but.transform.SetParent(modeObject.ScreenTransform);
 			but.transform.localScale = Vector3.one; // it's set to scale 0 for some reason?
 			if (modeObject.ScreenTransform.childCount != 0)
-				but.transform.SetSiblingIndex(modeObject.ScreenTransform.Find("TooltipBase").GetSiblingIndex()); // Should avoid being above the cursor
+			{
+;				Transform butRef = modeObject.ScreenTransform.Find("TutorialPrompt");
+				butRef ??= modeObject.ScreenTransform.Find("TooltipBase"); // If tutorial prompt doesn't exist
+
+				but.transform.SetSiblingIndex(butRef.GetSiblingIndex()); // Should avoid being above the cursor
+			}
 
 			but.OnRelease = new();
 			but.OnHighlight = new();
