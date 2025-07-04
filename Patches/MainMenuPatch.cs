@@ -1,7 +1,7 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
 using ModdedModesAPI.BepInEx;
 using ModdedModesAPI.ModesAPI;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -71,15 +71,15 @@ namespace ModdedModesAPI.Patches
 			mod.descriptionTextRef = mod.ScreenTransform.Find("ModeText").GetComponent<TextMeshProUGUI>();
 			mod.allowBackgroundAddition = false;
 
-			mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.EndlessScreen);
+			// mod = ModeObject.CreateModeObjectOverExistingScreen(SelectionScreen.EndlessScreen);
 
-			mod.SetThePageButtonsAxis(new(113f, 90f));
-			mod.allowAxisChanges = false;
+			// mod.SetThePageButtonsAxis(new(113f, 90f));
+			// mod.allowAxisChanges = false;
 
-			mod.allowedToChangeDescriptionText = false;
-			mod.IsLinked = true;
-			mod.descriptionTextRef = mod.ScreenTransform.Find("LevelText").GetComponent<TextMeshProUGUI>();
-			mod.allowBackgroundAddition = false;
+			// mod.allowedToChangeDescriptionText = false;
+			// mod.IsLinked = true;
+			// mod.descriptionTextRef = mod.ScreenTransform.Find("LevelText").GetComponent<TextMeshProUGUI>();
+			// mod.allowBackgroundAddition = false;
 
 			CustomModesHandler.InvokeMainMenuInit();
 

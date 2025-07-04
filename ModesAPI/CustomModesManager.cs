@@ -1,5 +1,4 @@
-﻿using ModdedModesAPI.BepInEx;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace ModdedModesAPI.ModesAPI
@@ -10,7 +9,7 @@ namespace ModdedModesAPI.ModesAPI
 		{
 			var man = modeObject.ScreenTransform.gameObject.AddComponent<CustomModesManager>();
 
-			List<StandardMenuButton> buttons = new(modeObject.ScreenTransform.GetComponentsInChildren<StandardMenuButton>());
+			List<StandardMenuButton> buttons = [.. modeObject.ScreenTransform.GetComponentsInChildren<StandardMenuButton>()];
 			buttons.RemoveAll(x => x.name == "BackButton" || x.name == "SeedInput"); // List all buttons except the ones that aren't "real" buttons
 
 			man.supportsPages = makePageSystem;

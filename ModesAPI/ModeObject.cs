@@ -1,7 +1,7 @@
-﻿using TMPro;
-using System.Linq;
-using UnityEngine;
+﻿using System.Linq;
 using ModdedModesAPI.BepInEx;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace ModdedModesAPI.ModesAPI
@@ -13,7 +13,7 @@ namespace ModdedModesAPI.ModesAPI
 	{
 		private ModeObject() =>
 			StandardButtonBuilder = new(this);
-		
+
 
 		private ModeObject(string screenName, bool hasPageSystem, params Vector2[] positions) : this() // Creates a new screen by default
 		{
@@ -114,7 +114,6 @@ namespace ModdedModesAPI.ModesAPI
 			{
 				SelectionScreen.MainScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<TutorialPrompt>()[0].transform),
 				SelectionScreen.ChallengesScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickChallenge").transform),
-				SelectionScreen.EndlessScreen => CreateModeObjectOverExistingScreen(Resources.FindObjectsOfTypeAll<CursorInitiator>().First(x => x.GetInstanceID() > 0 && x.name == "PickEndlessMap").transform),
 				_ => throw new System.ArgumentException($"Invalid SelectionScreen value. ({screen})")
 			};
 
@@ -162,7 +161,9 @@ namespace ModdedModesAPI.ModesAPI
 		/// The description text that appears below buttons (they are only usable in custom screens to avoid unexpected changes in main screens).
 		/// </summary>
 		/// <exception cref="System.NotSupportedException"></exception>
-		public TextMeshProUGUI DescriptionText { get
+		public TextMeshProUGUI DescriptionText
+		{
+			get
 			{
 				if (!allowedToChangeDescriptionText)
 					throw new System.NotSupportedException("Cannot return an instance of the DescriptionText from this screen, it was set to be innacessible by default.");
@@ -189,7 +190,7 @@ namespace ModdedModesAPI.ModesAPI
 					loc.key = "Men_PickMode";
 				}
 				return descriptionTextRef;
-			} 
+			}
 		}
 
 		internal TextMeshProUGUI descriptionTextRef;
@@ -200,8 +201,9 @@ namespace ModdedModesAPI.ModesAPI
 		/// <para>If the screen isn't allowed to have the sprite changed, you'll get an exception.</para>
 		/// </summary>
 		/// <exception cref="System.InvalidOperationException"></exception>
-		public Sprite Background { 
-			get => bg.sprite; 
+		public Sprite Background
+		{
+			get => bg.sprite;
 			set
 			{
 				if (!allowBackgroundAddition)
@@ -314,10 +316,6 @@ namespace ModdedModesAPI.ModesAPI
 		/// <summary>
 		/// The challenges mode selection screen
 		/// </summary>
-		ChallengesScreen,
-		/// <summary>
-		/// The endless mode selection screen
-		/// </summary>
-		EndlessScreen
+		ChallengesScreen
 	}
 }
